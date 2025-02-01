@@ -56,40 +56,40 @@ func postData(item ToDo) {
 	defer resp.Body.Close()
 	data, err = io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal("err")
+		log.Fatal(err)
 	}
 	log.Println(string(data))
 }
 func deleteItem(url string, id int) {
 	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/%d", url, id), nil)
 	if err != nil {
-		log.Fatal("There was an error")
+		log.Fatal(err)
 	}
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal("there was an error")
+		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal("there was an error")
+		log.Fatal(err)
 	}
 	log.Println(string(data))
 }
 func updateItem(url string, item ToDo, id int) {
 	sendData, err := json.Marshal(item)
 	if err != nil {
-		log.Fatal("conversion error")
+		log.Fatal(err)
 	}
 	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/%d", url, id), bytes.NewReader(sendData))
 	if err != nil {
-		log.Fatal("There was an error")
+		log.Fatal(err)
 	}
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal("There was an error")
+		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
