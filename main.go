@@ -15,6 +15,9 @@ type ToDo struct {
 	DESCRIPTION *string `json: "description"`
 	ID          int32   `json: "id"`
 }
+type UpdatedToDo struct {
+	COMPLETED bool `json:"completed"`
+}
 
 var newToDo = ToDo{
 	TASK:        "Buy milk",
@@ -24,7 +27,8 @@ var newToDo = ToDo{
 }
 
 func main() {
-	postData(newToDo)
+	getData()
+	//postData(newToDo)
 }
 func getData() {
 	resp, err := http.Get("http://127.0.0.1:8080/api/todos")
@@ -77,7 +81,7 @@ func deleteItem(url string, id int) {
 	}
 	log.Println(string(data))
 }
-func updateItem(url string, item ToDo, id int) {
+func updateItem(url string, item UpdatedToDo, id int) {
 	sendData, err := json.Marshal(item)
 	if err != nil {
 		log.Fatal(err)
