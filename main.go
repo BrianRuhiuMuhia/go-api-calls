@@ -16,8 +16,15 @@ type ToDo struct {
 	ID          int32   `json: "id"`
 }
 
+var newToDo = ToDo{
+	TASK:        "Buy milk",
+	COMPLETED:   false,
+	DESCRIPTION: nil,
+	ID:          1900,
+}
+
 func main() {
-	postData()
+	postData(newToDo)
 }
 func getData() {
 	resp, err := http.Get("http://127.0.0.1:8080/api/todos")
@@ -33,22 +40,17 @@ func getData() {
 	newstr := string(data)
 	log.Println(newstr)
 }
-func postData() {
-	newToDo := ToDo{
-		TASK:        "Buy milk",
-		COMPLETED:   false,
-		DESCRIPTION: nil,
-		ID:          1900,
-	}
-	data, err := json.Marshal(newToDo)
+func postData(item ToDo) {
+
+	data, err := json.Marshal(item)
 	if err != nil {
-		log.Fatal("error")
+		log.Fatal(err)
 		return
 	}
 	response := bytes.NewBuffer(data)
 	resp, err := http.Post("http://127.0.0.1:8080/api/todos", "application/json", response)
 	if err != nil {
-		log.Fatal("error")
+		log.Fatal(err)
 		return
 	}
 	defer resp.Body.Close()
@@ -59,13 +61,38 @@ func postData() {
 	log.Println(string(data))
 }
 func deleteItem(url string, id int) {
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("http://127.0.0.1:8080/api/todos/%d", id), nil)
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/%d", url, id), nil)
 	if err != nil {
 		log.Fatal("There was an error")
 	}
 	client := &http.Client{}
-	resp, err = client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal("there was an error")
 	}
+	defer resp.Body.Close()
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal("there was an error")
+	}
+	log.Println(string(data))
+}
+func updateItem(url string, item ToDo, id int) {
+	sendData, err := json.Marshal(item)
+	if err != nil {
+		log.Fatal("conversion error")
+	}
+	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/%d", url, id), bytes.NewReader(sendData))
+	if err != nil {
+		log.Fatal("There was an error")
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal("There was an error")
+	}
+	defer resp.Body.Close()
+	data, err := io.ReadAll(resp.Body)
+	fmt.Println(string(data))
+
 }
