@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -57,6 +58,14 @@ func postData() {
 	}
 	log.Println(string(data))
 }
-func deleteItem(url string) {
-
+func deleteItem(url string, id int) {
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("http://127.0.0.1:8080/api/todos/%d", id), nil)
+	if err != nil {
+		log.Fatal("There was an error")
+	}
+	client := &http.Client{}
+	resp, err = client.Do(req)
+	if err != nil {
+		log.Fatal("there was an error")
+	}
 }
